@@ -67,53 +67,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Generates quiz questions by calling the Gemini API.
+     * Generates quiz questions by calling our own Netlify Function.
      * @param {string} topic - The programming language/topic.
-     * @param {string} difficulty - The chosen difficulty ('easy', 'medium', 'hard', 'interview').
-     * @returns {Promise<Array|null>} A promise that resolves to an array of question objects or null on failure.
+     * @param {string} difficulty - The chosen difficulty.
+     * @returns {Promise<Array|null>} A promise that resolves to an array of question objects.
      */
     async function generateQuestions(topic, difficulty) {
-        let prompt;
-        if (difficulty === 'interview') {
-             prompt = `Generate 5 unique, high-quality, multiple-choice questions that are **very commonly asked in technical job interviews** for the programming language ${topic}. The questions should cover core concepts, data structures, and common pitfalls. One of the four options must be the correct answer. Provide the output in a valid JSON format.`;
-        } else {
-             prompt = `Generate 5 unique, high-quality, multiple-choice interview questions for the programming language ${topic} at a ${difficulty} difficulty level. One of the four options must be the correct answer. The questions should be suitable for preparing for a technical job interview. Provide the output in a valid JSON format.`;
-        }
-        
-        const payload = {
-            contents: [{ role: "user", parts: [{ text: prompt }] }],
-            generationConfig: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: "OBJECT",
-                    properties: { "questions": { type: "ARRAY", items: { type: "OBJECT", properties: { "question": { "type": "STRING" }, "options": { "type": "ARRAY", "items": { "type": "STRING" } }, "answer": { "type": "STRING" }, "subtopic": { "type": "STRING" } }, required: ["question", "options", "answer", "subtopic"] } } },
-                    required: ["questions"]
-                }
-            }
-        };
-
-        const apiKey = ""; // API key will be provided by the environment
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        // This is the endpoint for our Netlify Function.
+        const functionUrl = '/.netlify/functions/generate-questions';
 
         try {
-            const response = await fetch(apiUrl, {
+            const response = await fetch(functionUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ topic, difficulty }) // Send topic and difficulty to our function
             });
 
-            if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+            if (!response.ok) {
+                throw new Error(`Request to Netlify Function failed with status ${response.status}`);
+            }
 
             const result = await response.json();
+
+            // The structure from Google is nested inside the 'body' of our function's response.
             if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
                 const generatedData = JSON.parse(result.candidates[0].content.parts[0].text);
                 return generatedData.questions;
             } else {
+                // If the structure is not as expected, log the actual result for debugging
+                console.error("Unexpected API response structure:", result);
                 throw new Error("Invalid response structure from API.");
             }
         } catch (error) {
             console.error("Error generating questions:", error);
-            // Use a more modern, non-blocking notification if possible, but alert is a simple fallback.
             alert("Sorry, we couldn't generate questions at the moment. Please try again later.");
             return null;
         }
@@ -265,7 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
     backToTopicsBtn.addEventListener('click', () => showScreen('selection-screen'));
     changeDifficultyBtn.addEventListener('click', () => showScreen('difficulty-screen'));
     
-    // --- FIXED: Add event listener to each difficulty button directly ---
     difficultyButtons.querySelectorAll('button').forEach(button => {
         button.addEventListener('click', () => {
             const difficulty = button.dataset.difficulty;
