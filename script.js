@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        const apiKey = "AIzaSyBmcbndYj6YLZej9gaQOum4qqGOV3j-ShY"; // API key will be provided by the environment
+        const apiKey = ""; // API key will be provided by the environment
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
         try {
