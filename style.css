@@ -1,0 +1,47 @@
+/* --- Custom Styles --- */
+
+/* Use the Inter font for the entire body */
+body { 
+    font-family: 'Inter', sans-serif; 
+}
+
+/* A utility class for smooth transitions on elements */
+.transition-all { 
+    transition: all 0.3s ease-in-out; 
+}
+
+/* Ensure the topic buttons wrap nicely on different screen sizes */
+#topic-buttons { 
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+}
+
+/* Base styles for all buttons, using Tailwind's @apply directive for consistency.
+   In a real project, you'd have a build step to process this.
+   For this example, these styles are applied via HTML classes, but this shows
+   how you would structure it in a CSS file. */
+.btn {
+    @apply font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+}
+.btn-primary {
+    @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-300;
+}
+.btn-secondary {
+    @apply bg-slate-200 text-slate-700 hover:bg-slate-300 focus:ring-slate-400;
+}
+
+/* Styles for the loading spinner animation */
+.loader {
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 8px solid #0000; /* Transparent border */
+    border-right-color: #4f46e5; /* Indigo color for the spinner */
+    animation: l24 1s infinite linear;
+}
+
+/* Keyframe animation for the spinner rotation */
+@keyframes l24 { 
+    to { 
+        transform: rotate(1turn); 
+    } 
+}
