@@ -10,9 +10,9 @@ exports.handler = async function(event, context) {
     // --- Create the prompt for the AI ---
     let prompt;
     if (difficulty === 'interview') {
-        prompt = `Generate 5 unique, high-quality, multiple-choice questions that are **very commonly asked in technical job interviews** for the programming language ${topic}. The questions should cover core concepts, data structures, and common pitfalls. One of the four options must be the correct answer. Provide the output in a valid JSON format.`;
+        prompt = `Generate 10 unique, high-quality, multiple-choice questions that are **very commonly asked in technical job interviews** for the programming language ${topic}. The questions should cover core concepts, data structures, and common pitfalls. One of the four options must be the correct answer. Provide the output in a valid JSON format.`;
     } else {
-        prompt = `Generate 5 unique, high-quality, multiple-choice interview questions for the programming language ${topic} at a ${difficulty} difficulty level. One of the four options must be the correct answer. The questions should be suitable for preparing for a technical job interview. Provide the output in a valid JSON format.`;
+        prompt = `Generate 10 unique, high-quality, multiple-choice interview questions for the programming language ${topic} at a ${difficulty} difficulty level. One of the four options must be the correct answer. The questions should be suitable for preparing for a technical job interview. Provide the output in a valid JSON format.`;
     }
 
     // --- Prepare the payload for the Google API ---
